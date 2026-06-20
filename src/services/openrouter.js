@@ -58,6 +58,6 @@ export async function chatCompletion(messages, options = {}) {
 
 export async function testConnection() {
   return chatCompletion([
-    { role: 'user', content: 'Say "ok" and nothing else.' },
-  ], { maxTokens: 5 })
+    { role: 'user', content: 'Reply with just the word "ok".' },
+  ], { maxTokens: 20 })
 }

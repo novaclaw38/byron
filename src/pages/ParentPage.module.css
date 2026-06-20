@@ -197,6 +197,17 @@
 
 .btnTest:disabled { opacity: 0.5; }
 
+.testError {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: #fca5a5;
+  background: rgba(220,38,38,0.15);
+  border: 1px solid rgba(220,38,38,0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  word-break: break-word;
+}
+
 .btnDanger {
   padding: 7px 16px;
   background: rgba(220,38,38,0.25);

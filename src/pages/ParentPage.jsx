@@ -12,7 +12,8 @@ export default function ParentPage() {
   const [tab, setTab] = useState('Settings')
   const [settings, setSettings] = useState(() => getSettings())
   const [apiKey, setApiKey] = useState(() => getApiKey())
-  const [testStatus, setTestStatus] = useState(null) // null | 'testing' | 'ok' | 'fail'
+  const [testStatus, setTestStatus] = useState(null) // null | 'testing' | 'ok' | string(error)
+  const [testError, setTestError] = useState('')
   const [history, setHistory] = useState(() => getHistory())
   const [printData, setPrintData] = useState(null)
   const [printType, setPrintType] = useState('story')
@@ -33,15 +34,24 @@ export default function ParentPage() {
   }
 
   const handleTestConnection = async () => {
+    if (!apiKey.trim()) {
+      setTestError('Please enter an API key first.')
+      setTestStatus('fail')
+      setTimeout(() => setTestStatus(null), 4000)
+      return
+    }
     saveApiKey(apiKey)
     setTestStatus('testing')
+    setTestError('')
     try {
       await testConnection()
       setTestStatus('ok')
-    } catch {
+      setTimeout(() => setTestStatus(null), 3000)
+    } catch (err) {
+      setTestError(err.message || 'Unknown error')
       setTestStatus('fail')
+      setTimeout(() => setTestStatus(null), 6000)
     }
-    setTimeout(() => setTestStatus(null), 3000)
   }
 
   const handleClearHistory = () => {
@@ -182,6 +192,9 @@ export default function ParentPage() {
                 {testStatus === 'testing' ? 'Testing...' : testStatus === 'ok' ? '✓ Connected!' : testStatus === 'fail' ? '✗ Failed' : 'Test Connection'}
               </button>
             </div>
+            {testStatus === 'fail' && testError && (
+              <p className={styles.testError}>{testError}</p>
+            )}
           </div>
         )}
 

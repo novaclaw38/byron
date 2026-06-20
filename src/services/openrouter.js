@@ -8,11 +8,9 @@ const FREE_MODELS = [
   'mistralai/mistral-7b-instruct:free',
 ]
 
-export async function chatCompletion(messages, options = {}) {
+async function tryModel(messages, model, options) {
   const key = getApiKey()
   if (!key) throw new Error('NO_API_KEY')
-
-  const model = options.model || FREE_MODELS[0]
 
   const response = await fetch(BASE_URL, {
     method: 'POST',
@@ -34,15 +32,28 @@ export async function chatCompletion(messages, options = {}) {
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}))
-    // Try fallback model on model-related errors
-    if (response.status === 400 && options.model === undefined) {
-      return chatCompletion(messages, { ...options, model: FREE_MODELS[1] })
-    }
     throw new Error(err.error?.message || `HTTP ${response.status}`)
   }
 
   const data = await response.json()
   return data.choices[0].message.content.trim()
+}
+
+export async function chatCompletion(messages, options = {}) {
+  const key = getApiKey()
+  if (!key) throw new Error('NO_API_KEY')
+
+  // Walk through all free models; skip to the next on rate limit
+  for (let i = 0; i < FREE_MODELS.length; i++) {
+    try {
+      return await tryModel(messages, FREE_MODELS[i], options)
+    } catch (err) {
+      if (err.message === 'RATE_LIMIT' && i < FREE_MODELS.length - 1) {
+        continue // try next model
+      }
+      throw err // last model or non-rate-limit error
+    }
+  }
 }
 
 export async function testConnection() {

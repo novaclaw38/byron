@@ -12,6 +12,7 @@ export function useSpeech(settings) {
   const recRef = useRef(null)
   const synthRef = useRef(window.speechSynthesis)
   const onResultRef = useRef(null)
+  const listeningRef = useRef(false) // guards against Android auto-restart
 
   const supported = {
     stt: !!SpeechRec,
@@ -50,6 +51,7 @@ export function useSpeech(settings) {
   }, [voices, settings?.voiceName, settings?.robotVoice])
 
   const stopListening = useCallback(() => {
+    listeningRef.current = false
     if (recRef.current) {
       recRef.current.stop()
       recRef.current = null
@@ -69,6 +71,7 @@ export function useSpeech(settings) {
     onResultRef.current = onResult
     setTranscript('')
     setStatus('listening')
+    listeningRef.current = true
 
     const rec = new SpeechRec()
     rec.lang = 'en-US'
@@ -76,30 +79,13 @@ export function useSpeech(settings) {
     rec.interimResults = true
     recRef.current = rec
 
-    rec.onresult = (e) => {
-      const text = Array.from(e.results)
-        .map((r) => r[0].transcript)
-        .join('')
-      setTranscript(text)
-    }
-
-    rec.onend = () => {
-      const final = transcript
-      setStatus('idle')
-      recRef.current = null
-      if (final.trim() && onResultRef.current) {
-        onResultRef.current(final.trim())
-      }
-    }
-
-    rec.onerror = (e) => {
-      console.warn('Speech recognition error:', e.error)
-      setStatus('idle')
-      recRef.current = null
-    }
-
-    // Use a local var so onend captures the right transcript
     let latestTranscript = ''
+
+    // Auto-stop after 12 seconds so it never hangs
+    const timeout = setTimeout(() => {
+      if (listeningRef.current) rec.stop()
+    }, 12000)
+
     rec.onresult = (e) => {
       const text = Array.from(e.results)
         .map((r) => r[0].transcript)
@@ -107,12 +93,24 @@ export function useSpeech(settings) {
       latestTranscript = text
       setTranscript(text)
     }
+
     rec.onend = () => {
-      setStatus('idle')
+      clearTimeout(timeout)
+      if (!listeningRef.current) return // stopped intentionally, ignore
+      listeningRef.current = false
       recRef.current = null
+      setStatus('idle')
       if (latestTranscript.trim() && onResultRef.current) {
         onResultRef.current(latestTranscript.trim())
       }
+    }
+
+    rec.onerror = (e) => {
+      clearTimeout(timeout)
+      if (e.error !== 'no-speech') console.warn('Speech recognition error:', e.error)
+      listeningRef.current = false
+      recRef.current = null
+      setStatus('idle')
     }
 
     rec.start()
@@ -145,7 +143,7 @@ export function useSpeech(settings) {
 
     // iOS Safari requires speak() in a microtask after user gesture
     setTimeout(() => synthRef.current.speak(utter), 0)
-  }, [getVoice, settings?.speechRate, settings?.speechPitch, stopListening])
+  }, [getVoice, settings?.speechRate, settings?.speechPitch, settings?.robotVoice, stopListening])
 
   return {
     status,

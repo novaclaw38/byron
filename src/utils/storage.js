@@ -13,6 +13,7 @@ const DEFAULTS = {
   voiceName: '',
   speechRate: 0.9,
   speechPitch: 1.1,
+  voiceOnly: false,
   autoListen: false,
   robotVoice: false,
   avatarColor: '#7c3aed',

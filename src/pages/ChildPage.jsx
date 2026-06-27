@@ -209,14 +209,58 @@ export default function ChildPage() {
     navigate('/parent')
   }
 
+  const voiceOnly = settings.voiceOnly || false
+
   const modeColors = {
     chat:     ['#4c1d95', '#1e3a8a'],
     story:    ['#5b21b6', '#312e81'],
     game:     ['#831843', '#1e1b4b'],
     activity: ['#7c2d12', '#1e3a8a'],
     routine:  ['#14532d', '#1e3a8a'],
+    quiz:     ['#0c4a6e', '#1e3a8a'],
+    jokes:    ['#78350f', '#1e3a8a'],
+    sing:     ['#831843', '#4c1d95'],
+    feelings: ['#1e3a8a', '#312e81'],
+    move:     ['#14532d', '#0c4a6e'],
+    learn:    ['#312e81', '#1e3a8a'],
   }
   const [from, to] = modeColors[chat.mode] || modeColors.chat
+
+  if (voiceOnly) {
+    return (
+      <div className={styles.voicePage}>
+        <button
+          className={styles.voiceSettingsBtn}
+          onClick={() => setShowPin(true)}
+          aria-label="Parent settings"
+        >⚙️</button>
+
+        <div className={`${styles.voiceOrb} ${styles[`orb_${uiStatus}`]}`} />
+        <p className={styles.voiceBuddyText}>{buddyText}</p>
+        {userText ? <p className={styles.voiceUserText}>You: {userText}</p> : null}
+
+        <VoiceButton status={uiStatus} onPress={handleVoicePress} buddyName={buddyName} />
+
+        {showPin && (
+          <>
+            <ParentPin correctPin={settings.parentPin} onSuccess={handlePinSuccess} />
+            <button className={styles.pinDismiss} onClick={() => setShowPin(false)} aria-label="Cancel" />
+          </>
+        )}
+
+        {parentMessage && (
+          <div className={styles.msgOverlay}>
+            <div className={styles.msgBubble}>
+              <div className={styles.msgIcon}>🐻</div>
+              <p className={styles.msgTitle}>Message from your parent!</p>
+              <button className={styles.msgPlayBtn} onClick={() => parentAudioRef.current?.play()}>▶ Play again</button>
+              <button className={styles.msgDismissBtn} onClick={dismissParentMessage}>Got it!</button>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div

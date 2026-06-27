@@ -320,6 +320,22 @@ export default function ParentPage() {
             </div>
 
             <div className={styles.field}>
+              <label className={styles.label}>Screen-time saver (voice only)</label>
+              <div className={styles.toggle}>
+                <input
+                  type="checkbox"
+                  id="voiceOnly"
+                  checked={settings.voiceOnly || false}
+                  onChange={(e) => updateSetting('voiceOnly', e.target.checked)}
+                />
+                <label htmlFor="voiceOnly" className={styles.toggleLabel}>
+                  {settings.voiceOnly ? '🎙️ Voice only (screen off)' : '📱 Full screen (default)'}
+                </label>
+              </div>
+              <p className={styles.hint}>Turn on to hide all visuals — just a glowing orb. Great for bedtime or reducing screen time.</p>
+            </div>
+
+            <div className={styles.field}>
               <label className={styles.label}>Dubz's Voice</label>
               <div className={styles.toggle}>
                 <input

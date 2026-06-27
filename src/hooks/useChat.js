@@ -21,8 +21,13 @@ export function useChat(settings) {
       case 'story':    return PROMPTS.story(childName, buddyName)
       case 'game':     return PROMPTS.game(childName, buddyName)
       case 'activity': return PROMPTS.activity(childName, buddyName)
-      case 'routine':
-        return PROMPTS.routine(childName, buddyName, settings?.morningRoutine || [])
+      case 'routine':  return PROMPTS.routine(childName, buddyName, settings?.morningRoutine || [])
+      case 'quiz':     return PROMPTS.quiz(childName, buddyName)
+      case 'jokes':    return PROMPTS.jokes(childName, buddyName)
+      case 'sing':     return PROMPTS.sing(childName, buddyName)
+      case 'feelings': return PROMPTS.feelings(childName, buddyName)
+      case 'move':     return PROMPTS.move(childName, buddyName)
+      case 'learn':    return PROMPTS.learn(childName, buddyName)
       default:         return PROMPTS.chat(childName, buddyName)
     }
   }, [settings])

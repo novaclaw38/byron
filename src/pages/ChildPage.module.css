@@ -282,3 +282,97 @@
 }
 
 .msgDismissBtn:active { background: rgba(255,255,255,0.18); }
+
+/* ── Voice-only mode ───────────────────────────────────── */
+.voicePage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: #0a0a12;
+  position: relative;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.voiceSettingsBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 1.4rem;
+  padding: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  line-height: 1;
+  z-index: 10;
+}
+
+.voiceOrb {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.orb_idle {
+  background: radial-gradient(circle at 40% 35%, #6d28d9, #1e1b4b);
+  box-shadow: 0 0 40px 10px rgba(109,40,217,0.4);
+  animation: orbPulseIdle 3s ease-in-out infinite;
+}
+
+.orb_listening {
+  background: radial-gradient(circle at 40% 35%, #16a34a, #14532d);
+  box-shadow: 0 0 60px 20px rgba(22,163,74,0.5);
+  animation: orbPulseListen 0.8s ease-in-out infinite alternate;
+}
+
+.orb_thinking {
+  background: radial-gradient(circle at 40% 35%, #ca8a04, #78350f);
+  box-shadow: 0 0 50px 15px rgba(202,138,4,0.45);
+  animation: orbSpin 1.5s linear infinite;
+}
+
+.orb_speaking {
+  background: radial-gradient(circle at 40% 35%, #0891b2, #0c4a6e);
+  box-shadow: 0 0 60px 20px rgba(8,145,178,0.5);
+  animation: orbPulseSpeak 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes orbPulseIdle {
+  0%, 100% { transform: scale(1);    opacity: 0.85; }
+  50%       { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes orbPulseListen {
+  from { transform: scale(1);    box-shadow: 0 0 60px 20px rgba(22,163,74,0.5); }
+  to   { transform: scale(1.1);  box-shadow: 0 0 80px 28px rgba(22,163,74,0.7); }
+}
+
+@keyframes orbSpin {
+  0%   { transform: scale(1)    rotate(0deg); }
+  50%  { transform: scale(1.06) rotate(180deg); }
+  100% { transform: scale(1)    rotate(360deg); }
+}
+
+@keyframes orbPulseSpeak {
+  from { transform: scale(1);    box-shadow: 0 0 60px 20px rgba(8,145,178,0.5); }
+  to   { transform: scale(1.08); box-shadow: 0 0 80px 30px rgba(8,145,178,0.65); }
+}
+
+.voiceBuddyText {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  text-align: center;
+  max-width: 80%;
+  line-height: 1.4;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+}
+
+.voiceUserText {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  max-width: 80%;
+}

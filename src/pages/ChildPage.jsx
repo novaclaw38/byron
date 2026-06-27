@@ -5,19 +5,21 @@ import SpeechBubble from '../components/SpeechBubble.jsx'
 import VoiceButton from '../components/VoiceButton.jsx'
 import ModeSelector from '../components/ModeSelector.jsx'
 import ParentPin from '../components/ParentPin.jsx'
+import AvatarPicker from '../components/AvatarPicker.jsx'
 import { useSpeech } from '../hooks/useSpeech.js'
 import { useChat } from '../hooks/useChat.js'
-import { getSettings } from '../utils/storage.js'
+import { getSettings, saveSettings } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import { fetchMessageById, markPlayed } from '../services/messageService.js'
 import styles from './ChildPage.module.css'
 
 export default function ChildPage() {
   const navigate = useNavigate()
-  const [settings] = useState(() => getSettings())
+  const [settings, setSettings] = useState(() => getSettings())
   const [buddyText, setBuddyText] = useState('')
   const [userText, setUserText] = useState('')
   const [showPin, setShowPin] = useState(false)
+  const [showPicker, setShowPicker] = useState(false)
   const [uiStatus, setUiStatus] = useState('idle') // idle | listening | thinking | speaking
 
   const speech = useSpeech(settings)
@@ -25,7 +27,16 @@ export default function ChildPage() {
   const [parentMessage, setParentMessage] = useState(null)
   const parentAudioRef = useRef(null)
 
-  const childName = settings.childName || 'there'
+  const childName  = settings.childName  || 'there'
+  const buddyName  = settings.buddyName  || 'Buddy'
+  const avatarType = settings.avatarType || 'bear'
+
+  const handlePickerSave = ({ type, name, color }) => {
+    const next = { ...settings, avatarType: type, buddyName: name, avatarColor: color }
+    saveSettings(next)
+    setSettings(next)
+    setShowPicker(false)
+  }
 
   // Camera streaming — listen for parent requests
   const cameraStreamRef = useRef(null)
@@ -151,7 +162,7 @@ export default function ChildPage() {
 
   // Boot greeting
   useEffect(() => {
-    const greet = `Hi ${childName}! I'm Dubz! Pick something to do, or just tap the mic and talk to me!`
+    const greet = `Hi ${childName}! I'm ${buddyName}! Pick something to do, or just tap the mic and talk to me!`
     setBuddyText(greet)
     setUiStatus('speaking')
     speech.speak(greet, () => setUiStatus('idle'))
@@ -233,6 +244,13 @@ export default function ChildPage() {
         </span>
         {cameraOn && <span className={styles.cameraIndicator} title="Camera on">📹</span>}
         <button
+          className={styles.customizeBtn}
+          onClick={() => setShowPicker(true)}
+          aria-label="Customise buddy"
+        >
+          🎨
+        </button>
+        <button
           className={styles.settingsBtn}
           onClick={() => setShowPin(true)}
           aria-label="Parent settings"
@@ -243,7 +261,8 @@ export default function ChildPage() {
 
       {/* Avatar */}
       <div className={styles.avatarArea}>
-        <BuddyAvatar status={uiStatus} avatarColor={settings.avatarColor} />
+        <BuddyAvatar status={uiStatus} avatarColor={settings.avatarColor} type={avatarType} />
+        <p className={styles.buddyNameTag}>{buddyName}</p>
       </div>
 
       {/* Speech bubble */}
@@ -269,7 +288,7 @@ export default function ChildPage() {
             Voice not supported in this browser. Try Chrome!
           </p>
         )}
-        <VoiceButton status={uiStatus} onPress={handleVoicePress} />
+        <VoiceButton status={uiStatus} onPress={handleVoicePress} buddyName={buddyName} />
       </div>
 
       {/* PIN gate */}
@@ -286,6 +305,17 @@ export default function ChildPage() {
           className={styles.pinDismiss}
           onClick={() => setShowPin(false)}
           aria-label="Cancel"
+        />
+      )}
+
+      {/* Avatar + name picker */}
+      {showPicker && (
+        <AvatarPicker
+          currentType={avatarType}
+          currentName={buddyName}
+          currentColor={settings.avatarColor}
+          onSave={handlePickerSave}
+          onClose={() => setShowPicker(false)}
         />
       )}
 

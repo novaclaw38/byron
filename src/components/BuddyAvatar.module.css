@@ -92,6 +92,42 @@
   to   { opacity: 0.6; r: 7; }
 }
 
+/* ── Per-type ear/feature animations ── */
+.earTwitch {
+  animation: earTwitch 0.4s ease-in-out infinite alternate;
+  transform-box: fill-box; transform-origin: bottom center;
+}
+@keyframes earTwitch {
+  from { transform: rotate(-5deg); }
+  to   { transform: rotate(5deg); }
+}
+
+.dogEarWag  { animation: dogWagL 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: top center; }
+.dogEarWagR { animation: dogWagR 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: top center; }
+@keyframes dogWagL { from { transform: rotate(0deg); } to { transform: rotate(10deg); } }
+@keyframes dogWagR { from { transform: rotate(0deg); } to { transform: rotate(-10deg); } }
+
+.bunnyEarL { animation: bunnyWigL 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
+.bunnyEarR { animation: bunnyWigR 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
+@keyframes bunnyWigL { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+@keyframes bunnyWigR { from { transform: rotate(5deg); } to { transform: rotate(-5deg); } }
+
+.antennaPulse {
+  animation: antennaBlink 0.5s ease-in-out infinite alternate;
+}
+@keyframes antennaBlink {
+  from { fill: #86efac; r: 5; }
+  to   { fill: #ffffff; r: 7; }
+}
+
+.spikeGlow {
+  animation: spikeFlash 0.6s ease-in-out infinite alternate;
+}
+@keyframes spikeFlash {
+  from { fill: rgba(255,255,255,0.1); }
+  to   { fill: rgba(255,255,255,0.35); }
+}
+
 /* ── Speaking sparkles ── */
 .spark1 { animation: sparkle 0.7s ease-in-out 0s    infinite; transform-box: fill-box; transform-origin: center; }
 .spark2 { animation: sparkle 0.7s ease-in-out 0.15s infinite; transform-box: fill-box; transform-origin: center; }

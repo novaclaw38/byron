@@ -92,6 +92,20 @@
   text-transform: capitalize;
 }
 
+.customizeBtn {
+  font-size: 1.3rem;
+  padding: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  line-height: 1;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.customizeBtn:active {
+  background: rgba(255,255,255,0.2);
+  transform: rotate(15deg) scale(1.1);
+}
+
 .settingsBtn {
   font-size: 1.4rem;
   padding: 8px;
@@ -107,11 +121,21 @@
 
 .avatarArea {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 8px 0 4px;
+  padding: 4px 0 0;
   z-index: 1;
+}
+
+.buddyNameTag {
+  font-size: 1rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.75);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+  letter-spacing: 0.05em;
+  margin-top: -6px;
 }
 
 .bubbleArea {

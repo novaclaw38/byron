@@ -6,6 +6,8 @@ const KEYS = {
 
 const DEFAULTS = {
   childName: 'Dubz',
+  buddyName: 'Buddy',
+  avatarType: 'bear',
   parentPin: '1234',
   provider: 'groq',
   voiceName: '',

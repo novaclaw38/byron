@@ -24,6 +24,8 @@ export default function ChildPage() {
 
   const speech = useSpeech(settings)
   const chat = useChat(settings)
+  const [wordIndex, setWordIndex] = useState(-1)
+  const rafRef = useRef(null)
   const [parentMessage, setParentMessage] = useState(null)
   const parentAudioRef = useRef(null)
 
@@ -169,6 +171,30 @@ export default function ChildPage() {
     setUiStatus('speaking')
     speech.speak(greet, () => setUiStatus('idle'))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Story-mode word-by-word reading tracker
+  useEffect(() => {
+    if (chat.mode !== 'story' || uiStatus !== 'speaking' || !buddyText) {
+      setWordIndex(-1)
+      if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
+      return
+    }
+    const words = buddyText.trim().split(/\s+/).filter(Boolean)
+    if (!words.length) return
+    const tick = () => {
+      const audio = speech.audioRef.current
+      if (audio && audio.duration) {
+        const progress = Math.min(audio.currentTime / audio.duration, 1)
+        setWordIndex(Math.min(Math.floor(progress * words.length), words.length - 1))
+      }
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+    return () => {
+      if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
+      setWordIndex(-1)
+    }
+  }, [chat.mode, uiStatus, buddyText]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleVoicePressRef = useRef(null)
 
@@ -338,6 +364,8 @@ export default function ChildPage() {
           buddyText={buddyText}
           userText={userText}
           status={uiStatus}
+          storyMode={chat.mode === 'story'}
+          wordIndex={wordIndex}
         />
       </div>
 

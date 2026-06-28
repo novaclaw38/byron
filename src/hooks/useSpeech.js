@@ -237,5 +237,6 @@ export function useSpeech(settings) {
     status, transcript, voices, supported,
     startListening, stopListening, speak, stopSpeaking,
     startWakeWord, stopWakeWord,
+    audioRef,   // exposed so callers can read currentTime/duration for word sync
   }
 }

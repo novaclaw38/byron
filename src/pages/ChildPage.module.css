@@ -178,6 +178,19 @@
   margin-bottom: 4px;
 }
 
+.wakeHint {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+  margin-top: 6px;
+  animation: wakeHintPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes wakeHintPulse {
+  0%, 100% { opacity: 0.45; }
+  50%       { opacity: 0.9; }
+}
+
 .cameraIndicator {
   font-size: 1rem;
   opacity: 0.85;

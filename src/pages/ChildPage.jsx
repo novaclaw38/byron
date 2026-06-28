@@ -27,9 +27,11 @@ export default function ChildPage() {
   const [parentMessage, setParentMessage] = useState(null)
   const parentAudioRef = useRef(null)
 
-  const childName  = settings.childName  || 'there'
-  const buddyName  = settings.buddyName  || 'Buddy'
-  const avatarType = settings.avatarType || 'bear'
+  const childName       = settings.childName       || 'there'
+  const buddyName       = settings.buddyName       || 'Buddy'
+  const avatarType      = settings.avatarType      || 'bear'
+  const wakeWordEnabled = settings.wakeWordEnabled || false
+  const wakePhrase      = `hey ${buddyName}`.toLowerCase()
 
   const handlePickerSave = ({ type, name, color }) => {
     const next = { ...settings, avatarType: type, buddyName: name, avatarColor: color }
@@ -168,6 +170,21 @@ export default function ChildPage() {
     speech.speak(greet, () => setUiStatus('idle'))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleVoicePressRef = useRef(null)
+
+  // Wake word loop — active when idle and wake word is enabled
+  useEffect(() => {
+    if (!wakeWordEnabled || uiStatus !== 'idle') {
+      speech.stopWakeWord()
+      return
+    }
+    speech.startWakeWord(wakePhrase, () => {
+      handleVoicePressRef.current?.()
+    })
+    return () => speech.stopWakeWord()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wakeWordEnabled, uiStatus, wakePhrase])
+
   const handleModeSelect = useCallback((modeId) => {
     const intro = chat.switchMode(modeId)
     setBuddyText(intro)
@@ -200,9 +217,12 @@ export default function ChildPage() {
       return
     }
     if (uiStatus !== 'idle') return
+    speech.stopWakeWord()
     setUiStatus('listening')
     speech.startListening(handleUserSpeech)
   }, [uiStatus, speech, handleUserSpeech])
+
+  handleVoicePressRef.current = handleVoicePress
 
   const handlePinSuccess = () => {
     setShowPin(false)
@@ -240,6 +260,9 @@ export default function ChildPage() {
         {userText ? <p className={styles.voiceUserText}>You: {userText}</p> : null}
 
         <VoiceButton status={uiStatus} onPress={handleVoicePress} buddyName={buddyName} />
+        {wakeWordEnabled && uiStatus === 'idle' && (
+          <p className={styles.wakeHint}>Say &ldquo;Hey {buddyName}&rdquo;</p>
+        )}
 
         {showPin && (
           <>
@@ -333,6 +356,9 @@ export default function ChildPage() {
           </p>
         )}
         <VoiceButton status={uiStatus} onPress={handleVoicePress} buddyName={buddyName} />
+        {wakeWordEnabled && uiStatus === 'idle' && (
+          <p className={styles.wakeHint}>Say &ldquo;Hey {buddyName}&rdquo;</p>
+        )}
       </div>
 
       {/* PIN gate */}

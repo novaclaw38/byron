@@ -15,6 +15,7 @@ import { supabase } from '../lib/supabase.js'
 import { fetchMessageById, markPlayed } from '../services/messageService.js'
 import { COURSES } from '../utils/courses.js'
 import { pickTrack } from '../utils/music.js'
+import SingAlong from '../components/SingAlong.jsx'
 import styles from './ChildPage.module.css'
 
 export default function ChildPage({ session }) {
@@ -252,11 +253,19 @@ export default function ChildPage({ session }) {
     }
     const words = buddyText.trim().split(/\s+/).filter(Boolean)
     if (!words.length) return
+    // Char-proportion: words with more characters get proportionally more time
+    const totalChars = words.reduce((s, w) => s + w.length, 0)
     const tick = () => {
       const audio = speech.audioRef.current
-      if (audio && audio.duration) {
-        const progress = Math.min(audio.currentTime / audio.duration, 1)
-        setWordIndex(Math.min(Math.floor(progress * words.length), words.length - 1))
+      if (audio && audio.duration > 0) {
+        const charPos = Math.min(audio.currentTime / audio.duration, 1) * totalChars
+        let cumChars = 0
+        let idx = words.length - 1
+        for (let i = 0; i < words.length; i++) {
+          cumChars += words[i].length
+          if (charPos <= cumChars) { idx = i; break }
+        }
+        setWordIndex(idx)
       } else if (speech.boundaryWordRef.current >= 0) {
         setWordIndex(Math.min(speech.boundaryWordRef.current, words.length - 1))
       }
@@ -388,6 +397,26 @@ export default function ChildPage({ session }) {
           </div>
         )}
       </div>
+    )
+  }
+
+  // Sing mode renders its own full-screen overlay
+  if (chat.mode === 'sing') {
+    return (
+      <SingAlong
+        speech={speech}
+        onExit={() => {
+          cancelBubbleClear()
+          const intro = chat.switchMode('chat')
+          setBuddyText(intro)
+          setUserText('')
+          setUiStatus('speaking')
+          speech.speak(intro, () => {
+            setUiStatus('idle')
+            scheduleBubbleClear()
+          })
+        }}
+      />
     )
   }
 

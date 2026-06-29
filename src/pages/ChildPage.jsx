@@ -172,9 +172,10 @@ export default function ChildPage() {
     speech.speak(greet, () => setUiStatus('idle'))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Story-mode word-by-word reading tracker
+  // Story/sing-mode word-by-word reading tracker (karaoke dot)
+  const isTrackedMode = chat.mode === 'story' || chat.mode === 'sing'
   useEffect(() => {
-    if (chat.mode !== 'story' || uiStatus !== 'speaking' || !buddyText) {
+    if (!isTrackedMode || uiStatus !== 'speaking' || !buddyText) {
       setWordIndex(-1)
       if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
       return
@@ -184,8 +185,12 @@ export default function ChildPage() {
     const tick = () => {
       const audio = speech.audioRef.current
       if (audio && audio.duration) {
+        // Google TTS: use actual audio progress
         const progress = Math.min(audio.currentTime / audio.duration, 1)
         setWordIndex(Math.min(Math.floor(progress * words.length), words.length - 1))
+      } else if (speech.boundaryWordRef.current >= 0) {
+        // Web Speech fallback: use onboundary word index
+        setWordIndex(Math.min(speech.boundaryWordRef.current, words.length - 1))
       }
       rafRef.current = requestAnimationFrame(tick)
     }
@@ -194,7 +199,7 @@ export default function ChildPage() {
       if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null }
       setWordIndex(-1)
     }
-  }, [chat.mode, uiStatus, buddyText]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isTrackedMode, uiStatus, buddyText]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleVoicePressRef = useRef(null)
 
@@ -364,7 +369,7 @@ export default function ChildPage() {
           buddyText={buddyText}
           userText={userText}
           status={uiStatus}
-          storyMode={chat.mode === 'story'}
+          storyMode={isTrackedMode}
           wordIndex={wordIndex}
         />
       </div>

@@ -12,6 +12,7 @@ export function useSpeech(settings) {
   const recRef    = useRef(null)
   const synthRef  = useRef(window.speechSynthesis)
   const audioRef  = useRef(null)         // Google TTS <Audio>
+  const boundaryWordRef = useRef(-1)     // word index from Web Speech onboundary
   const onResultRef = useRef(null)
   const listeningRef = useRef(false)
 
@@ -57,8 +58,12 @@ export function useSpeech(settings) {
     utter.rate   = settings?.robotVoice ? 0.85 : (settings?.speechRate  ?? 0.9)
     utter.pitch  = settings?.robotVoice ? 0.3  : (settings?.speechPitch ?? 1.1)
     utter.volume = 1
-    utter.onend  = () => { setStatus('idle'); onDone?.() }
-    utter.onerror = () => { setStatus('idle'); onDone?.() }
+    utter.onboundary = (e) => {
+      if (e.name !== 'word') return
+      boundaryWordRef.current = text.slice(0, e.charIndex).trim().split(/\s+/).filter(Boolean).length
+    }
+    utter.onend  = () => { boundaryWordRef.current = -1; setStatus('idle'); onDone?.() }
+    utter.onerror = () => { boundaryWordRef.current = -1; setStatus('idle'); onDone?.() }
     setTimeout(() => synthRef.current?.speak(utter), 0)
   }, [getFallbackVoice, settings?.robotVoice, settings?.speechRate, settings?.speechPitch])
 
@@ -74,6 +79,7 @@ export function useSpeech(settings) {
       audioRef.current.src = ''
       audioRef.current = null
     }
+    boundaryWordRef.current = -1
     synthRef.current?.cancel()
     setStatus('idle')
   }, [])
@@ -237,6 +243,7 @@ export function useSpeech(settings) {
     status, transcript, voices, supported,
     startListening, stopListening, speak, stopSpeaking,
     startWakeWord, stopWakeWord,
-    audioRef,   // exposed so callers can read currentTime/duration for word sync
+    audioRef,          // Google TTS audio element — currentTime/duration for word sync
+    boundaryWordRef,   // Web Speech fallback — word index from onboundary event
   }
 }

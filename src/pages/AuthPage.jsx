@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import styles from './AuthPage.module.css'
 
 export default function AuthPage() {
+  const navigate = useNavigate()
   const [mode, setMode] = useState('login') // 'login' | 'signup'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -36,6 +38,12 @@ export default function AuthPage() {
 
   return (
     <div className={styles.page}>
+      <button
+        onClick={() => navigate('/')}
+        style={{ position: 'absolute', top: 20, left: 20, background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '14px' }}
+      >
+        ← Home
+      </button>
       <div className={styles.card}>
         {/* Bear logo */}
         <div className={styles.logo}>

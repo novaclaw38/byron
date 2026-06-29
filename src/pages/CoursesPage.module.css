@@ -1,0 +1,188 @@
+.page {
+  min-height: 100vh;
+  background: #030712;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.bg {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(124, 58, 237, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  padding: 32px 24px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.back {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  display: block;
+  transition: color 0.2s;
+}
+.back:hover { color: rgba(255,255,255,0.8); }
+
+.title {
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 900;
+  margin: 0 0 10px;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, white 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sub {
+  font-size: 16px;
+  color: rgba(255,255,255,0.45);
+  margin: 0;
+}
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.courseCard {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.courseCard:hover {
+  border-color: rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 40px rgba(124, 58, 237, 0.1);
+}
+
+.courseHeader {
+  position: relative;
+  padding: 36px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.courseEmoji {
+  font-size: 56px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+
+.lockBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.7);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 99px;
+  backdrop-filter: blur(8px);
+}
+
+.courseBody { padding: 20px 20px 20px; }
+
+.courseName {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.courseDesc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+.expandBtn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+.expandBtn:hover { background: rgba(255,255,255,0.06); color: white; }
+
+.lessons {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lessonBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  color: white;
+}
+.lessonBtn:hover {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+.lessonNum {
+  width: 22px;
+  height: 22px;
+  background: rgba(168, 85, 247, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #a78bfa;
+  flex-shrink: 0;
+}
+
+.lessonEmoji { font-size: 18px; flex-shrink: 0; }
+
+.lessonTitle {
+  flex: 1;
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+}
+
+.lessonArrow {
+  font-size: 14px;
+  color: rgba(255,255,255,0.3);
+}

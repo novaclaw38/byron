@@ -1,20 +1,25 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import BuddyAvatar from '../components/BuddyAvatar.jsx'
 import SpeechBubble from '../components/SpeechBubble.jsx'
 import VoiceButton from '../components/VoiceButton.jsx'
 import ModeSelector from '../components/ModeSelector.jsx'
 import ParentPin from '../components/ParentPin.jsx'
 import AvatarPicker from '../components/AvatarPicker.jsx'
+import UpgradePrompt from '../components/UpgradePrompt.jsx'
 import { useSpeech } from '../hooks/useSpeech.js'
 import { useChat } from '../hooks/useChat.js'
+import { useSubscription } from '../hooks/useSubscription.jsx'
 import { getSettings, saveSettings } from '../utils/storage.js'
 import { supabase } from '../lib/supabase.js'
 import { fetchMessageById, markPlayed } from '../services/messageService.js'
+import { COURSES } from '../utils/courses.js'
+import { pickTrack } from '../utils/music.js'
 import styles from './ChildPage.module.css'
 
-export default function ChildPage() {
+export default function ChildPage({ session }) {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [settings, setSettings] = useState(() => getSettings())
   const [buddyText, setBuddyText] = useState('')
   const [userText, setUserText] = useState('')
@@ -24,8 +29,11 @@ export default function ChildPage() {
 
   const speech = useSpeech(settings)
   const chat = useChat(settings)
+  const { isPro, tier, daysLeft } = useSubscription()
   const [wordIndex, setWordIndex] = useState(-1)
+  const [showUpgrade, setShowUpgrade] = useState(false)
   const rafRef = useRef(null)
+  const bgMusicRef = useRef(null)
   const [parentMessage, setParentMessage] = useState(null)
   const parentAudioRef = useRef(null)
 
@@ -164,13 +172,51 @@ export default function ChildPage() {
     setParentMessage(null)
   }
 
-  // Boot greeting
+  // Boot greeting — or jump straight into a course lesson
   useEffect(() => {
-    const greet = `Hi ${childName}! I'm ${buddyName}! Pick something to do, or just tap the mic and talk to me!`
-    setBuddyText(greet)
-    setUiStatus('speaking')
-    speech.speak(greet, () => setUiStatus('idle'))
+    const courseId  = searchParams.get('course')
+    const lessonId  = searchParams.get('lesson')
+    const courseObj = courseId ? COURSES.find(c => c.id === courseId) : null
+    const lesson    = courseObj ? courseObj.lessons.find(l => l.id === lessonId) : null
+
+    if (lesson) {
+      chat.switchMode('learn')
+      const intro = `Let's learn about "${lesson.title}"! ${lesson.prompt.slice(0, 80)}…`
+      setBuddyText(intro)
+      setUiStatus('speaking')
+      speech.speak(intro, () => setUiStatus('idle'))
+    } else {
+      const greet = `Hi ${childName}! I'm ${buddyName}! Pick something to do, or just tap the mic and talk to me!`
+      setBuddyText(greet)
+      setUiStatus('speaking')
+      speech.speak(greet, () => setUiStatus('idle'))
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Background music in sing mode
+  useEffect(() => {
+    if (chat.mode === 'sing') {
+      const audio = new Audio(pickTrack())
+      audio.loop   = true
+      audio.volume = 0.2
+      bgMusicRef.current = audio
+      audio.play().catch(() => {})
+    } else {
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause()
+        bgMusicRef.current = null
+      }
+    }
+    return () => {
+      if (bgMusicRef.current) { bgMusicRef.current.pause(); bgMusicRef.current = null }
+    }
+  }, [chat.mode])
+
+  // Duck music volume while Buddy speaks
+  useEffect(() => {
+    if (!bgMusicRef.current) return
+    bgMusicRef.current.volume = uiStatus === 'speaking' ? 0.05 : uiStatus === 'listening' ? 0 : 0.2
+  }, [uiStatus])
 
   // Story/sing-mode word-by-word reading tracker (karaoke dot)
   const isTrackedMode = chat.mode === 'story' || chat.mode === 'sing'
@@ -377,7 +423,19 @@ export default function ChildPage() {
       {/* Mode selector (shown when in idle or chat mode) */}
       {(uiStatus === 'idle' || uiStatus === 'listening') && (
         <div className={styles.modesArea}>
-          <ModeSelector currentMode={chat.mode} onSelect={handleModeSelect} />
+          <ModeSelector
+            currentMode={chat.mode}
+            onSelect={handleModeSelect}
+            onUpgrade={() => setShowUpgrade(true)}
+          />
+          <div className={styles.coursesRow}>
+            <button className={styles.coursesBtn} onClick={() => navigate('/courses')}>
+              📚 Courses {!isPro && <span className={styles.coursesPro}>Pro</span>}
+            </button>
+            {tier === 'trial' && daysLeft !== null && (
+              <span className={styles.trialBadge}>Trial: {daysLeft}d left</span>
+            )}
+          </div>
         </div>
       )}
 
@@ -420,6 +478,11 @@ export default function ChildPage() {
           onSave={handlePickerSave}
           onClose={() => setShowPicker(false)}
         />
+      )}
+
+      {/* Upgrade prompt */}
+      {showUpgrade && (
+        <UpgradePrompt session={session} onClose={() => setShowUpgrade(false)} />
       )}
 
       {/* Parent voice message overlay */}

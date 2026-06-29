@@ -4,6 +4,9 @@ export default function SpeechBubble({ buddyText, userText, status, storyMode, w
   const showThinking = status === 'thinking'
   const showWordTracker = storyMode && wordIndex >= 0 && buddyText && !showThinking
 
+  // Bubble is visible when there's text OR when showing thinking dots
+  const isVisible = !!(buddyText || showThinking)
+
   const renderText = () => {
     if (showThinking) {
       return <div className={styles.dots}><span /><span /><span /></div>
@@ -33,7 +36,7 @@ export default function SpeechBubble({ buddyText, userText, status, storyMode, w
         </div>
       )}
 
-      <div className={`${styles.buddyBubble} ${buddyText ? styles.visible : ''} ${showWordTracker ? styles.storyBubble : ''}`}>
+      <div className={`${styles.buddyBubble} ${isVisible ? styles.visible : ''} ${showWordTracker ? styles.storyBubble : ''}`}>
         {renderText()}
         <div className={styles.tail} />
       </div>

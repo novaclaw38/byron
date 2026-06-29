@@ -15,6 +15,7 @@ import { supabase } from '../lib/supabase.js'
 import { fetchMessageById, markPlayed } from '../services/messageService.js'
 import { COURSES } from '../utils/courses.js'
 import { pickTrack } from '../utils/music.js'
+import SingAlong from '../components/SingAlong.jsx'
 import styles from './ChildPage.module.css'
 
 export default function ChildPage({ session }) {
@@ -36,6 +37,8 @@ export default function ChildPage({ session }) {
   const bgMusicRef = useRef(null)
   const [parentMessage, setParentMessage] = useState(null)
   const parentAudioRef = useRef(null)
+  // Timer ref for clearing bubble text after speech ends
+  const bubbleClearRef = useRef(null)
 
   const childName       = settings.childName       || 'there'
   const buddyName       = settings.buddyName       || 'Buddy'
@@ -162,7 +165,7 @@ export default function ChildPage({ session }) {
     }
     audio.onended = cleanup
     audio.onerror = cleanup
-    audio.play().catch(() => {}) // keep overlay visible for manual play if blocked
+    audio.play().catch(() => {})
   }, [parentMessage]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const dismissParentMessage = () => {
@@ -171,6 +174,22 @@ export default function ChildPage({ session }) {
     if (parentMessage) markPlayed(parentMessage.id).catch(() => {})
     setParentMessage(null)
   }
+
+  // Helper: schedule bubble fade-out after speech ends
+  const scheduleBubbleClear = useCallback((delay = 1500) => {
+    if (bubbleClearRef.current) clearTimeout(bubbleClearRef.current)
+    bubbleClearRef.current = setTimeout(() => {
+      setBuddyText('')
+      setUserText('')
+    }, delay)
+  }, [])
+
+  const cancelBubbleClear = useCallback(() => {
+    if (bubbleClearRef.current) {
+      clearTimeout(bubbleClearRef.current)
+      bubbleClearRef.current = null
+    }
+  }, [])
 
   // Boot greeting — or jump straight into a course lesson
   useEffect(() => {
@@ -184,12 +203,18 @@ export default function ChildPage({ session }) {
       const intro = `Let's learn about "${lesson.title}"! ${lesson.prompt.slice(0, 80)}…`
       setBuddyText(intro)
       setUiStatus('speaking')
-      speech.speak(intro, () => setUiStatus('idle'))
+      speech.speak(intro, () => {
+        setUiStatus('idle')
+        scheduleBubbleClear()
+      })
     } else {
       const greet = `Hi ${childName}! I'm ${buddyName}! Pick something to do, or just tap the mic and talk to me!`
       setBuddyText(greet)
       setUiStatus('speaking')
-      speech.speak(greet, () => setUiStatus('idle'))
+      speech.speak(greet, () => {
+        setUiStatus('idle')
+        scheduleBubbleClear()
+      })
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -228,14 +253,20 @@ export default function ChildPage({ session }) {
     }
     const words = buddyText.trim().split(/\s+/).filter(Boolean)
     if (!words.length) return
+    // Char-proportion: words with more characters get proportionally more time
+    const totalChars = words.reduce((s, w) => s + w.length, 0)
     const tick = () => {
       const audio = speech.audioRef.current
-      if (audio && audio.duration) {
-        // Google TTS: use actual audio progress
-        const progress = Math.min(audio.currentTime / audio.duration, 1)
-        setWordIndex(Math.min(Math.floor(progress * words.length), words.length - 1))
+      if (audio && audio.duration > 0) {
+        const charPos = Math.min(audio.currentTime / audio.duration, 1) * totalChars
+        let cumChars = 0
+        let idx = words.length - 1
+        for (let i = 0; i < words.length; i++) {
+          cumChars += words[i].length
+          if (charPos <= cumChars) { idx = i; break }
+        }
+        setWordIndex(idx)
       } else if (speech.boundaryWordRef.current >= 0) {
-        // Web Speech fallback: use onboundary word index
         setWordIndex(Math.min(speech.boundaryWordRef.current, words.length - 1))
       }
       rafRef.current = requestAnimationFrame(tick)
@@ -263,14 +294,19 @@ export default function ChildPage({ session }) {
   }, [wakeWordEnabled, uiStatus, wakePhrase])
 
   const handleModeSelect = useCallback((modeId) => {
+    cancelBubbleClear()
     const intro = chat.switchMode(modeId)
     setBuddyText(intro)
     setUserText('')
     setUiStatus('speaking')
-    speech.speak(intro, () => setUiStatus('idle'))
-  }, [chat, speech])
+    speech.speak(intro, () => {
+      setUiStatus('idle')
+      scheduleBubbleClear()
+    })
+  }, [chat, speech, scheduleBubbleClear, cancelBubbleClear])
 
   const handleUserSpeech = useCallback((transcript) => {
+    cancelBubbleClear()
     setUserText(transcript)
     setUiStatus('thinking')
     setBuddyText('')
@@ -280,12 +316,13 @@ export default function ChildPage({ session }) {
       setUiStatus('speaking')
       speech.speak(reply, () => {
         setUiStatus('idle')
+        scheduleBubbleClear()
         if (settings.autoListen) {
           setTimeout(() => handleVoicePress(), 500)
         }
       })
     })
-  }, [chat, speech, settings.autoListen])
+  }, [chat, speech, settings.autoListen, scheduleBubbleClear, cancelBubbleClear])
 
   const handleVoicePress = useCallback(() => {
     if (uiStatus === 'listening') {
@@ -294,10 +331,11 @@ export default function ChildPage({ session }) {
       return
     }
     if (uiStatus !== 'idle') return
+    cancelBubbleClear()
     speech.stopWakeWord()
     setUiStatus('listening')
     speech.startListening(handleUserSpeech)
-  }, [uiStatus, speech, handleUserSpeech])
+  }, [uiStatus, speech, handleUserSpeech, cancelBubbleClear])
 
   handleVoicePressRef.current = handleVoicePress
 
@@ -362,6 +400,26 @@ export default function ChildPage({ session }) {
     )
   }
 
+  // Sing mode renders its own full-screen overlay
+  if (chat.mode === 'sing') {
+    return (
+      <SingAlong
+        speech={speech}
+        onExit={() => {
+          cancelBubbleClear()
+          const intro = chat.switchMode('chat')
+          setBuddyText(intro)
+          setUserText('')
+          setUiStatus('speaking')
+          speech.speak(intro, () => {
+            setUiStatus('idle')
+            scheduleBubbleClear()
+          })
+        }}
+      />
+    )
+  }
+
   return (
     <div
       className={styles.page}
@@ -420,7 +478,20 @@ export default function ChildPage({ session }) {
         />
       </div>
 
-      {/* Mode selector (shown when in idle or chat mode) */}
+      {/* Voice button — main CTA, above the mode strip */}
+      <div className={styles.voiceArea}>
+        {!speech.supported.stt && (
+          <p className={styles.noMic}>
+            Voice not supported in this browser. Try Chrome!
+          </p>
+        )}
+        <VoiceButton status={uiStatus} onPress={handleVoicePress} buddyName={buddyName} />
+        {wakeWordEnabled && uiStatus === 'idle' && (
+          <p className={styles.wakeHint}>Say &ldquo;Hey {buddyName}&rdquo;</p>
+        )}
+      </div>
+
+      {/* Mode selector — bottom strip, shown when idle or listening */}
       {(uiStatus === 'idle' || uiStatus === 'listening') && (
         <div className={styles.modesArea}>
           <ModeSelector
@@ -438,19 +509,6 @@ export default function ChildPage({ session }) {
           </div>
         </div>
       )}
-
-      {/* Voice button */}
-      <div className={styles.voiceArea}>
-        {!speech.supported.stt && (
-          <p className={styles.noMic}>
-            Voice not supported in this browser. Try Chrome!
-          </p>
-        )}
-        <VoiceButton status={uiStatus} onPress={handleVoicePress} buddyName={buddyName} />
-        {wakeWordEnabled && uiStatus === 'idle' && (
-          <p className={styles.wakeHint}>Say &ldquo;Hey {buddyName}&rdquo;</p>
-        )}
-      </div>
 
       {/* PIN gate */}
       {showPin && (

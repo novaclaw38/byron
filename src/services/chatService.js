@@ -32,8 +32,12 @@ export async function chatCompletion(messages, options = {}) {
   return data.choices[0].message.content.trim()
 }
 
+// Uses a public ping endpoint — no Supabase auth required, just checks the Groq key works.
 export async function testConnection() {
-  return chatCompletion([
-    { role: 'user', content: 'Reply with just the word "ok".' },
-  ], { maxTokens: 20 })
+  const response = await fetch('/api/ping')
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err.error?.message || `HTTP ${response.status}`)
+  }
+  return 'ok'
 }

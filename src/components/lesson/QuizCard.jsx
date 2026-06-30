@@ -1,16 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styles from './QuizCard.module.css'
 
 export default function QuizCard({ step, onComplete }) {
   const [selected, setSelected] = useState(null)
   const [showConfetti, setShowConfetti] = useState(false)
+  const timerRef = useRef(null)
+
+  useEffect(() => () => clearTimeout(timerRef.current), [])
 
   const handleSelect = (i) => {
     if (selected !== null) return
     setSelected(i)
     if (i === step.correct) {
       setShowConfetti(true)
-      setTimeout(onComplete, 650)
+      timerRef.current = setTimeout(onComplete, 650)
     }
   }
 

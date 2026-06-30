@@ -14,6 +14,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Did you know a tiny seed holds a whole plant sleeping inside it? Let\'s find out how it wakes up!',
+            narrations: [
+              'Did you know a tiny seed holds a whole plant sleeping inside it? Let\'s find out how it wakes up!',
+              'Every big tree you\'ve ever seen started as a tiny little seed! Want to learn how it grows?',
+            ],
             narrationYoung: 'A little seed has a baby plant sleeping inside! Let\'s wake it up!',
             emoji: '🌰',
             fact: 'Seeds need water and warmth to wake up and start growing. Inside every seed is a tiny baby plant!',
@@ -34,6 +38,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Great job! Tell me — what is one thing a plant needs to grow?',
+            narrations: [
+              'Great job! Tell me — what is one thing a plant needs to grow?',
+              'You\'re a plant expert now! Can you tell me — what does a plant need to be happy?',
+            ],
           },
         ],
         printSheet: {
@@ -55,6 +63,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Plants make their own food from sunlight, water, air, and nutrients in the soil — like a recipe with four ingredients!',
+            narrations: [
+              'Plants make their own food from sunlight, water, air, and nutrients in the soil — like a recipe with four ingredients!',
+              'Here\'s something amazing — plants don\'t eat food like you do, they MAKE their own! Want to know how?',
+            ],
             narrationYoung: 'Plants eat sunlight like you eat food! They also need water, air, and soil.',
             emoji: '☀️',
             fact: 'Plants make food using sunlight — this is called photosynthesis. They need sun, water, air and soil nutrients!',
@@ -69,6 +81,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Soil is full of tiny nutrients — like vitamins for plants. Earthworms help dig through the soil and make it better!',
+            narrations: [
+              'Soil is full of tiny nutrients — like vitamins for plants. Earthworms help dig through the soil and make it better!',
+              'Here\'s a cool secret — the soil under your feet is full of tiny helpers! And earthworms are the very best ones!',
+            ],
             narrationYoung: 'Soil has tiny food bits inside for plants! Worms help mix the soil.',
             emoji: '🌍',
             fact: 'Earthworms improve the soil by tunnelling through it and mixing in nutrients. They are a plant\'s best friend!',
@@ -76,6 +92,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Wonderful! Can you name all four things a plant needs to grow? Say them out loud!',
+            narrations: [
+              'Wonderful! Can you name all four things a plant needs to grow? Say them out loud!',
+              'You\'ve learned so much about plants! Can you remember the four things they need? Give it a try!',
+            ],
           },
         ],
         printSheet: {
@@ -97,6 +117,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'You can grow a bean plant at home with just a cup, some soil, a bean seed, and a little water. Let\'s learn how!',
+            narrations: [
+              'You can grow a bean plant at home with just a cup, some soil, a bean seed, and a little water. Let\'s learn how!',
+              'Guess what? You can be a real gardener today! All you need is a cup, soil, a seed, and water!',
+            ],
             narrationYoung: 'We can grow our own plant at home! We just need a cup, soil, a seed, and water!',
             emoji: '🪴',
             fact: 'Bean seeds sprout in 5 to 10 days! Keep the soil damp and put your cup in a sunny spot.',
@@ -117,6 +141,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Great! What container could you use to grow your plant at home? Be creative!',
+            narrations: [
+              'Great! What container could you use to grow your plant at home? Be creative!',
+              'You know how to grow a bean plant now! What would you use as your pot if you tried it today?',
+            ],
           },
         ],
         printSheet: {
@@ -138,6 +166,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Bees are garden superheroes! They carry pollen from flower to flower — this is called pollination and it helps plants make fruit and seeds.',
+            narrations: [
+              'Bees are garden superheroes! They carry pollen from flower to flower — this is called pollination and it helps plants make fruit and seeds.',
+              'Did you know bees are some of the hardest workers in nature? They visit flowers all day carrying something very special!',
+            ],
             narrationYoung: 'Bees carry pollen to flowers to help make fruit and seeds!',
             emoji: '🐝',
             fact: 'Without bees to pollinate flowers, most fruits and vegetables would not grow. Bees are essential for our food!',
@@ -152,6 +184,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Ladybugs are tiny garden protectors. They eat aphids — tiny bugs that damage plants. One ladybug can eat 5 000 aphids in its lifetime!',
+            narrations: [
+              'Ladybugs are tiny garden protectors. They eat aphids — tiny bugs that damage plants. One ladybug can eat 5 000 aphids in its lifetime!',
+              'Here\'s a tiny but mighty garden hero — the ladybug! It eats the bad bugs that try to hurt plants!',
+            ],
             narrationYoung: 'Ladybugs eat the bad bugs that hurt plants. They help keep the garden safe!',
             emoji: '🐞',
             fact: 'A single ladybug can eat up to 5 000 aphids in its lifetime, protecting plants from damage.',
@@ -159,6 +195,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Which garden bug is your favourite, and why? Tell me!',
+            narrations: [
+              'Which garden bug is your favourite, and why? Tell me!',
+              'Now you know about bees, earthworms, and ladybugs! Which one is your favourite? Tell me why!',
+            ],
           },
         ],
         printSheet: {
@@ -189,6 +229,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'A robot is a machine that can sense its surroundings, think about what to do, and then act. Just like you — but made of metal and code!',
+            narrations: [
+              'A robot is a machine that can sense its surroundings, think about what to do, and then act. Just like you — but made of metal and code!',
+              'Have you ever wondered how robots work? They\'re actually a lot like you — they can sense, think, and move!',
+            ],
             narrationYoung: 'A robot can see, think, and move — like a helpful machine friend!',
             emoji: '🤖',
             fact: 'Robots have three main abilities: sensing (cameras, microphones), thinking (a computer brain), and acting (motors that move things).',
@@ -209,6 +253,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Can you name a robot you have seen in real life or on TV? Tell me about it!',
+            narrations: [
+              'Can you name a robot you have seen in real life or on TV? Tell me about it!',
+              'You\'re a robot expert now! Tell me — have you ever seen a real robot, and what did it do?',
+            ],
           },
         ],
         printSheet: {
@@ -230,6 +278,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Robots use sensors to understand the world around them. Cameras are like eyes, microphones are like ears, and touch sensors are like skin!',
+            narrations: [
+              'Robots use sensors to understand the world around them. Cameras are like eyes, microphones are like ears, and touch sensors are like skin!',
+              'How does a robot know what\'s happening around it? It uses special parts called sensors — like superpowers for robots!',
+            ],
             narrationYoung: 'Robots have sensor eyes, ears, and skin to feel the world around them!',
             emoji: '👁️',
             fact: 'Some robots use infrared sensors to see heat, or sonar to detect distance — like a bat using echoes to navigate!',
@@ -250,6 +302,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'If you were building a robot to cook food, which sensors would it need? Think carefully!',
+            narrations: [
+              'If you were building a robot to cook food, which sensors would it need? Think carefully!',
+              'Great thinking! Now imagine your very own cooking robot — what would it need to see, hear, and touch? Tell me!',
+            ],
           },
         ],
         printSheet: {
@@ -271,6 +327,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Code is like a recipe — it gives the robot step-by-step instructions. The robot follows every single step in exactly the right order!',
+            narrations: [
+              'Code is like a recipe — it gives the robot step-by-step instructions. The robot follows every single step in exactly the right order!',
+              'Imagine giving your robot a list of instructions to follow perfectly every time. That list is called CODE!',
+            ],
             narrationYoung: 'Code tells robots what to do, step by step — like a recipe!',
             emoji: '💻',
             fact: 'Robots follow code instructions perfectly. If you make even one mistake in your code, the robot does the wrong thing!',
@@ -291,6 +351,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'If you were coding a robot to make a sandwich, what would be your very first step? Tell me!',
+            narrations: [
+              'If you were coding a robot to make a sandwich, what would be your very first step? Tell me!',
+              'You know how to think like a coder! What would step one be if your robot had to make a sandwich?',
+            ],
           },
         ],
         printSheet: {
@@ -312,6 +376,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Every great robot starts with a question: what problem does it solve? Engineers always design robots to help with something important!',
+            narrations: [
+              'Every great robot starts with a question: what problem does it solve? Engineers always design robots to help with something important!',
+              'Before any engineer builds a robot, they ask one big question — what problem will this robot solve? That\'s the most important step!',
+            ],
             narrationYoung: 'Robots are built to help solve problems. What problem could your robot fix?',
             emoji: '🔧',
             fact: 'The best engineers always start with the problem, not the gadget. Understanding the problem deeply leads to better inventions!',
@@ -332,6 +400,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Now it\'s your turn! Describe your dream robot — what problem does it solve and what does it look like?',
+            narrations: [
+              'Now it\'s your turn! Describe your dream robot — what problem does it solve and what does it look like?',
+              'You think like a real engineer! Tell me about your dream robot — what would it do, and what would it look like?',
+            ],
           },
         ],
         printSheet: {
@@ -362,6 +434,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'When baking soda — a base — meets vinegar — an acid — they react and make lots of carbon dioxide gas. That\'s what causes the fizzy eruption!',
+            narrations: [
+              'When baking soda — a base — meets vinegar — an acid — they react and make lots of carbon dioxide gas. That\'s what causes the fizzy eruption!',
+              'Here\'s a fun science secret — two ordinary kitchen things can make a mini explosion when they meet! Want to find out what they are?',
+            ],
             narrationYoung: 'Baking soda and vinegar have a fizzy reaction when they touch each other!',
             emoji: '🌋',
             fact: 'Acids and bases react together to make carbon dioxide gas. The bubbles rush out so fast they look like a volcano erupting!',
@@ -382,6 +458,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Have you ever tried this experiment at home? Tell me what you saw — or what you think would happen!',
+            narrations: [
+              'Have you ever tried this experiment at home? Tell me what you saw — or what you think would happen!',
+              'You\'re a scientist now! Have you done the volcano experiment? Tell me what happened — or what you predict would happen!',
+            ],
           },
         ],
         printSheet: {
@@ -403,6 +483,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'White sunlight is actually made of ALL the colours mixed together. When light bends through water or glass, it splits into a beautiful rainbow!',
+            narrations: [
+              'White sunlight is actually made of ALL the colours mixed together. When light bends through water or glass, it splits into a beautiful rainbow!',
+              'Here\'s an amazing secret about sunshine — it looks white, but it\'s hiding ALL the colours of the rainbow inside it!',
+            ],
             narrationYoung: 'Sunlight has all the colours hiding inside it. Water bends the light and shows them all!',
             emoji: '🌈',
             fact: 'You can make a rainbow at home by holding a glass of water in bright sunlight over a white sheet of paper. Try it!',
@@ -423,6 +507,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Can you describe a rainbow you have seen? Where were you, and what did it look like?',
+            narrations: [
+              'Can you describe a rainbow you have seen? Where were you, and what did it look like?',
+              'Rainbows are so magical! Have you ever seen one? Tell me where you were and all the colours you spotted!',
+            ],
           },
         ],
         printSheet: {
@@ -444,6 +532,10 @@ export const COURSES = [
           {
             type: 'explain',
             narration: 'Things float when they push aside more water than they weigh. A huge ship floats because it\'s hollow inside — it pushes out a lot of water!',
+            narrations: [
+              'Things float when they push aside more water than they weigh. A huge ship floats because it\'s hollow inside — it pushes out a lot of water!',
+              'Have you ever wondered why a giant ship floats but a tiny coin sinks? The answer is all about how much water something pushes away!',
+            ],
             narrationYoung: 'Big hollow ships float because they push lots of water out of the way. Small solid coins sink!',
             emoji: '🚢',
             fact: 'This is called buoyancy. If an object weighs less than the water it pushes aside, it floats. If it weighs more, it sinks.',
@@ -464,6 +556,10 @@ export const COURSES = [
           {
             type: 'activity',
             narration: 'Try dropping different objects in water at home. Which ones float and which ones sink? Tell me what you found!',
+            narrations: [
+              'Try dropping different objects in water at home. Which ones float and which ones sink? Tell me what you found!',
+              'You\'re a floating expert! What do you think would happen if you dropped a grape and a cork in water? Tell me your prediction!',
+            ],
           },
         ],
         printSheet: {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { COURSES } from '../utils/courses.js'
+import { pickNarration } from '../utils/pickNarration.js'
 import { getSettings } from '../utils/storage.js'
 import { useSpeech } from '../hooks/useSpeech.js'
 import { useCompletions } from '../hooks/useCompletions.js'
@@ -43,7 +44,7 @@ export default function LessonPage() {
   // Compute step-derived values with optional chaining so they're safe before the guard
   const steps = lesson?.steps
   const step = steps?.[stepIndex]
-  const narration = (childAge <= 6 && step?.narrationYoung) ? step.narrationYoung : step?.narration
+  const narration = step ? pickNarration(step, childAge) : ''
 
   // Fix 2: navigate is a side-effect — must not be called during render
   useEffect(() => {
